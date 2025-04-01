@@ -3,7 +3,7 @@ export default function PlayGame() {
     <div className="aspect-video bg-[#1A1A1A] rounded-lg overflow-hidden relative">
       <div className="absolute inset-0">
         <iframe
-          src="https://thirdweb-example.github.io/unity-take-flight/"
+          src="https://joe-thirdweb.github.io/Unified-Takeflight-build/"
           title="Take Flight Game"
           className="w-full h-full border-0"
           style={{

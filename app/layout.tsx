@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { ThirdwebProvider } from "thirdweb/react";
+
 
 export const metadata: Metadata = {
   title: 'v0 App',
@@ -14,7 +16,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <ThirdwebProvider>
       <body>{children}</body>
+      </ThirdwebProvider>
     </html>
   )
 }

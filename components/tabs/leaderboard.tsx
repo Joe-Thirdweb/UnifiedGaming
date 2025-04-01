@@ -1,55 +1,85 @@
+import { useEffect, useState } from "react";
+import { createThirdwebClient, defineChain, getContract } from "thirdweb";
+import { useReadContract } from "thirdweb/react";
+
 export default function Leaderboard() {
+  type LeaderboardEntry = {
+    address: string;
+    score: number;
+  };
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+
+  const client = createThirdwebClient({
+    clientId: "d1f529f9f313ea2bc2a6e92f70e37482",
+  });
+
+  const contract = getContract({
+    client,
+    address: "0x0A1a2F3F27c9BAdB0775F45d49A830A65BD4fBc2",
+    chain: defineChain(2021),
+  });
+
+  const { data, isLoading } = useReadContract({
+    contract,
+    method: "function getAllScores() view returns (address[], uint256[])",
+    params: [],
+  });
+
+  // Fetch leaderboard data when the component mounts or when data changes
+  useEffect(() => {
+    if (data) {
+      // Process the returned data (addresses and scores)
+      const scores = data[0].map((address, index) => ({
+        address,
+        score: Number(data[1][index]),
+      }));
+
+      setLeaderboard(scores);
+    }
+  }, [data, isLoading]);
+
   return (
     <div className="bg-[#1A1A1A] p-6 rounded-lg">
-      <h3 className="text-xl font-semibold mb-4">Global Leaderboard</h3>
+      <h3 className="text-xl font-semibold mb-4 text-white">Global Leaderboard</h3>
       <div className="space-y-4">
-        <div className="flex justify-between items-center p-3 bg-[#2D2D2D] rounded-lg">
-          <div className="flex items-center gap-3">
-            <div className="bg-[#3D8BFD] text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">
-              1
-            </div>
-            <span>Player123</span>
-          </div>
-          <span className="font-bold">12,345</span>
-        </div>
-        <div className="flex justify-between items-center p-3 bg-[#2D2D2D] rounded-lg">
-          <div className="flex items-center gap-3">
-            <div className="bg-[#3D8BFD]/80 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">
-              2
-            </div>
-            <span>CryptoFlyer</span>
-          </div>
-          <span className="font-bold">10,982</span>
-        </div>
-        <div className="flex justify-between items-center p-3 bg-[#2D2D2D] rounded-lg">
-          <div className="flex items-center gap-3">
-            <div className="bg-[#3D8BFD]/60 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">
-              3
-            </div>
-            <span>BlockchainPilot</span>
-          </div>
-          <span className="font-bold">9,876</span>
-        </div>
-        <div className="flex justify-between items-center p-3 bg-[#2D2D2D] rounded-lg">
-          <div className="flex items-center gap-3">
-            <div className="bg-[#2D2D2D] text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">
-              4
-            </div>
-            <span>NFTRunner</span>
-          </div>
-          <span className="font-bold">8,765</span>
-        </div>
-        <div className="flex justify-between items-center p-3 bg-[#2D2D2D] rounded-lg">
-          <div className="flex items-center gap-3">
-            <div className="bg-[#2D2D2D] text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">
-              5
-            </div>
-            <span>Web3Gamer</span>
-          </div>
-          <span className="font-bold">7,654</span>
-        </div>
+        {!isLoading && (
+          <ul>
+            {leaderboard.map(({ address, score }, index) => (
+              <li
+                key={index}
+                className="flex justify-between items-center p-3 bg-[#2D2D2D] rounded-lg mb-2"
+              >
+                {/* Rank */}
+                <div className="flex items-center gap-3">
+                  {index < 3 ? (
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+                        index === 0
+                          ? "bg-[#3D8BFD] text-white" // Blue for rank 1
+                          : index === 1
+                          ? "bg-[#C0C0C0] text-black" // Silver for rank 2
+                          : "bg-[#CD7F32] text-black" // Bronze for rank 3
+                      }`}
+                    >
+                      {index + 1}
+                    </div>
+                  ) : (
+                    <span className="text-white">{index + 1}</span>
+                  )}
+                  {/* Address */}
+                  <span className="text-white">
+                    {address.slice(0, 6)}...{address.slice(-4)}
+                  </span>
+                </div>
+                {/* Score */}
+                <span className="text-white font-medium">{score}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        {isLoading && <p className="text-white">Loading leaderboard...</p>}
       </div>
     </div>
-  )
+  );
+  
 }
-
