@@ -1,14 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { createThirdwebClient, defineChain, getContract } from "thirdweb";
-import { PayEmbed, useActiveAccount } from "thirdweb/react";
+import { ConnectButton, PayEmbed, useActiveAccount } from "thirdweb/react";
 import { claimTo } from "thirdweb/extensions/erc1155";
+import { ecosystemWallet } from "thirdweb/wallets";
 
 export default function Marketplace() {
   const client = createThirdwebClient({
     clientId: "d1f529f9f313ea2bc2a6e92f70e37482",
   });
   const account = useActiveAccount();
-
+  const chain = defineChain(2021);
+  const wallets = [ecosystemWallet("ecosystem.thirdweb-games")];
   const contract = getContract({
     chain: defineChain(2021),
     client,
@@ -20,49 +22,60 @@ export default function Marketplace() {
 
   return (
     <div className="table-container">
-      <table className="responsive-table">
-        <tbody>
-          <tr>
-            {[0, 1, 2].map((tokenId) => (
-              <td key={tokenId} className="table-cell">
-                <div className="pay-embed-wrapper">
-                <PayEmbed
-                  client={client}
-                  payOptions={{
-                    mode: "transaction",
-                    transaction: claimTo({
-                      contract: contract,
-                      quantity: BigInt(1),
-                      tokenId: BigInt(tokenId),
-                      to: account!.address,
-                    }),
-                    metadata: {
-                      name: `Multiply Your points!\n${metadataName[tokenId]}`,
-                      image: metadataImage[tokenId],
-                    },
-                  }}
-                />
-                </div>
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
-
+      {account ? (
+        <table className="responsive-table">
+          <tbody>
+            <tr>
+              {[0, 1, 2].map((tokenId) => (
+                <td key={tokenId} className="table-cell">
+                  <div className="pay-embed-wrapper">
+                    <PayEmbed
+                      client={client}
+                      payOptions={{
+                        mode: "transaction",
+                        transaction: claimTo({
+                          contract: contract,
+                          quantity: BigInt(1),
+                          tokenId: BigInt(tokenId),
+                          to: account!.address,
+                        }),
+                        metadata: {
+                          name: `Multiply Your points!\n${metadataName[tokenId]}`,
+                          image: metadataImage[tokenId],
+                        },
+                      }}
+                    />
+                  </div>
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      ) : (
+        <div>
+          <ConnectButton
+            client={client}
+            chain={chain}
+            wallets={wallets}
+            connectButton={{
+              label: "Sign in",
+            }}
+          />
+        </div>
+      )}
       {/* Responsive styles */}
       <style jsx>{`
         .table-container {
           width: 100%;
           padding: 16px;
           display: flex;
-
         }
 
         .responsive-table {
           width: 100%;
           border-collapse: collapse;
-          display:flex;
-          margin:0 auto;
+          display: flex;
+          margin: 0 auto;
         }
 
         .table-cell {
@@ -82,7 +95,7 @@ export default function Marketplace() {
         @media (max-width: 600px) {
           .responsive-table {
             display: block;
-            justify-content:center;
+            justify-content: center;
             margin: 0 auto; /* Center table horizontally */
           }
 
