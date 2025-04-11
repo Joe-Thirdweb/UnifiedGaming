@@ -18,7 +18,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps
   const [isLoading, setIsLoading] = useState(false)
 
   const client = createThirdwebClient({
-    clientId: "d1f529f9f313ea2bc2a6e92f70e37482"
+    clientId: process.env.NEXT_PUBLIC_ClIENTID!
   });
   const chain = defineChain(2021)
   const wallets = [ecosystemWallet("ecosystem.thirdweb-games")];

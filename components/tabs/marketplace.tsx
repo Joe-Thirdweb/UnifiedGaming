@@ -1,29 +1,29 @@
 import { Button } from "@/components/ui/button";
 import { createThirdwebClient, defineChain, getContract } from "thirdweb";
-import { ConnectButton, PayEmbed, useActiveAccount } from "thirdweb/react";
+import { ConnectButton, getDefaultToken, PayEmbed, useActiveAccount } from "thirdweb/react";
 import { claimTo } from "thirdweb/extensions/erc1155";
 import { ecosystemWallet } from "thirdweb/wallets";
 
 export default function Marketplace() {
   const client = createThirdwebClient({
-    clientId: "d1f529f9f313ea2bc2a6e92f70e37482",
+    clientId: process.env.NEXT_PUBLIC_ClIENTID!
   });
   const account = useActiveAccount();
   const chain = defineChain(2021);
   const wallets = [ecosystemWallet("ecosystem.thirdweb-games")];
   const contract = getContract({
-    chain: defineChain(2021),
+    chain: chain,
     client,
-    address: "0x21fd13275BD27a86f814828dba3Ad2A53ecBA15d",
+    address: process.env.NEXT_PUBLIC_ITEMS!,
   });
 
   const metadataImage = [`/2x.jpg`, `/3x multiplier.jpg`, `/5x multiplier.jpg`];
   const metadataName = ["x2", "x3", "x4"];
 
   return (
-    <div className="table-container">
+    <div className="flex w-full justify-center table-container">
       {account ? (
-        <table className="responsive-table">
+        <table className="flex w-full justify-center responsive-table">
           <tbody>
             <tr>
               {[0, 1, 2].map((tokenId) => (
@@ -52,7 +52,7 @@ export default function Marketplace() {
           </tbody>
         </table>
       ) : (
-        <div>
+        <div className="flex w-full justify-center">
           <ConnectButton
             client={client}
             chain={chain}

@@ -13,17 +13,17 @@ import {
 } from "thirdweb/react";
 import { ecosystemWallet } from "thirdweb/wallets";
 
-export default function Perks() {
+export default function Items() {
   const address = useActiveAccount();
   const chain = defineChain(2021);
   const wallets = [ecosystemWallet("ecosystem.thirdweb-games")];
 
   const client = createThirdwebClient({
-    clientId: "d1f529f9f313ea2bc2a6e92f70e37482",
+    clientId: process.env.NEXT_PUBLIC_ClIENTID!
   });
   const contract = getContract({
     client,
-    address: "0xF27BfFd2f018Eff31796822487EEF6515c3c054D",
+    address: process.env.NEXT_PUBLIC_BADGES!,
     chain: defineChain(2021),
   });
 
@@ -47,7 +47,7 @@ export default function Perks() {
       };
       nftLoad();
     }
-  }, []);
+  }, [address]);
 
   return (
     <div className="bg-[#1A1A1A] p-6 rounded-lg">
@@ -71,7 +71,7 @@ export default function Perks() {
             ))}
         </div>
       ) : (
-        <div>
+        <div className="flex w-full justify-center">
           <ConnectButton
             client={client}
             chain={chain}

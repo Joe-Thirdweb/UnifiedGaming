@@ -2,131 +2,83 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Gamepad2, Trophy, ShoppingBag, User, LogIn } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Gamepad2, Trophy, ShoppingBag, User } from "lucide-react";
+
 
 // Import tab components
 import PlayGame from "@/components/tabs/play-game";
 import Leaderboard from "@/components/tabs/leaderboard";
 import Marketplace from "@/components/tabs/marketplace";
-import Perks from "@/components/tabs/perks";
-import LoginModal from "@/components/login-modal";
 import { ConnectButton } from "thirdweb/react";
 import { createThirdwebClient, defineChain } from "thirdweb";
 import { ecosystemWallet } from "thirdweb/wallets";
+import Items from "@/components/tabs/items";
 
 export default function LandingPage() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [activePerks, setActivePerks] = useState({
-    doubleCoin: false,
-    extraLife: false,
-    speedBoost: false,
-  });
 
   const client = createThirdwebClient({
-    clientId: "d1f529f9f313ea2bc2a6e92f70e37482",
+    clientId: process.env.NEXT_PUBLIC_ClIENTID!
   });
   const chain = defineChain(2021);
   const wallets = [ecosystemWallet("ecosystem.thirdweb-games")];
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    // Reset perks when logging out
-    setActivePerks({
-      doubleCoin: false,
-      extraLife: false,
-      speedBoost: false,
-    });
-  };
-
   return (
     <div className="flex flex-col min-h-screen bg-[#0D0D0D] text-white">
-  {/* Header */}
-  <header className="p-4">
-    <div className="container mx-auto flex flex-wrap justify-between items-center">
-      {/* Logo */}
-      <Link href="/" className="text-2xl font-bold flex items-center mb-4 md:mb-0">
-        <Image
-          src="/placeholder.svg"
-          alt="Take Flight Logo"
-          width={40}
-          height={40}
-          className="mr-2"
-        />
-        <span className="take-flight-text">Take Flight</span>
-      </Link>
-
-      {/* Navigation */}
-      <nav className="flex flex-wrap items-center justify-center md:justify-end w-full md:w-auto">
-        <ul className="flex flex-wrap space-x-6 mb-4 md:mb-0 pr-4">
-          <li>
-            <Link href="#play" className="hover:text-[#3D8BFD]">
-              Play
-            </Link>
-          </li>
-          <li>
-            <Link href="#about" className="hover:text-[#3D8BFD]">
-              About
-            </Link>
-          </li>
-          <li>
-            <Link href="#features" className="hover:text-[#3D8BFD]">
-              Features
-            </Link>
-          </li>
-        </ul>
-
-        {/* Connect Button */}
-        {isLoggedIn ? (
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="flex items-center gap-2 border-[#3D8BFD] text-[#3D8BFD]"
-              >
-                <User size={16} />
-                My Profile
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="bg-[#1A1A1A] border-[#3D3D3D]">
-              <DialogHeader>
-                <DialogTitle>User Profile</DialogTitle>
-              </DialogHeader>
-              <div className="py-4">
-                <p className="text-gray-300 mb-4">
-                  You are logged in as Player123
-                </p>
-                <Button variant="destructive" onClick={handleLogout}>
-                  Logout
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        ) : (
-          <div className="w-full md:w-auto flex justify-center">
-            {/* Ensure ConnectButton is responsive */}
-            <ConnectButton
-              client={client}
-              chain={chain}
-              wallets={wallets}
-              connectButton={{
-                label: "Sign in",
-              }}
+      {/* Header */}
+      <header className="p-4">
+        <div className="container mx-auto flex flex-wrap justify-between items-center">
+          {/* Logo */}
+          <Link
+            href="/"
+            className="text-2xl font-bold flex items-center mb-4 md:mb-0"
+          >
+            <Image
+              src="/placeholder.svg"
+              alt="Take Flight Logo"
+              width={40}
+              height={40}
+              className="mr-2"
             />
-          </div>
-        )}
-      </nav>
-    </div>
-  </header>
+            <span className="take-flight-text">Take Flight</span>
+          </Link>
+
+          {/* Navigation */}
+          <nav className="flex flex-wrap items-center justify-center md:justify-end w-full md:w-auto">
+            <ul className="flex flex-wrap space-x-6 mb-4 md:mb-0 pr-4">
+              <li>
+                <Link href="#play" className="hover:text-[#3D8BFD]">
+                  Play
+                </Link>
+              </li>
+              <li>
+                <Link href="#about" className="hover:text-[#3D8BFD]">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link href="#features" className="hover:text-[#3D8BFD]">
+                  Features
+                </Link>
+              </li>
+            </ul>
+
+            {/* Connect Button */}
+            <div className="w-full md:w-auto flex justify-center">
+              {/* Ensure ConnectButton is responsive */}
+              <ConnectButton
+                client={client}
+                chain={chain}
+                wallets={wallets}
+                connectButton={{
+                  label: "Sign in",
+                }}
+              />
+            </div>
+          </nav>
+        </div>
+      </header>
 
       {/* Hero Section */}
       <section className="flex-grow flex items-center justify-center text-center p-8 relative overflow-hidden">
@@ -140,12 +92,15 @@ export default function LandingPage() {
             An exhilarating infinite runner built with thirdweb SDK. Soar
             through the skies, compete globally, and trade unique items!
           </p>
-          <Button
-            size="lg"
-            className="bg-[#3D8BFD] hover:bg-[#3D8BFD]/90 text-white"
-          >
-            Play Now
-          </Button>
+
+          <Link href={"#play"}>
+            <Button
+              size="lg"
+              className="bg-[#3D8BFD] hover:bg-[#3D8BFD]/90 text-white"
+            >
+              Play Now
+            </Button>
+          </Link>
         </div>
       </section>
 
@@ -176,7 +131,7 @@ export default function LandingPage() {
                 Marketplace
               </TabsTrigger>
               <TabsTrigger
-                value="perks"
+                value="items"
                 className="flex items-center justify-center"
               >
                 <User className="mr-2 h-4 w-4" />
@@ -192,8 +147,8 @@ export default function LandingPage() {
             <TabsContent value="marketplace" className="mt-4">
               <Marketplace />
             </TabsContent>
-            <TabsContent value="perks" className="mt-4">
-              <Perks/>
+            <TabsContent value="items" className="mt-4">
+              <Items />
             </TabsContent>
           </Tabs>
         </div>

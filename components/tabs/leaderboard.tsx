@@ -10,12 +10,12 @@ export default function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
 
   const client = createThirdwebClient({
-    clientId: "d1f529f9f313ea2bc2a6e92f70e37482",
+    clientId: process.env.NEXT_PUBLIC_ClIENTID!
   });
 
   const contract = getContract({
     client,
-    address: "0x0A1a2F3F27c9BAdB0775F45d49A830A65BD4fBc2",
+    address: process.env.NEXT_PUBLIC_LEADERBOARD!,
     chain: defineChain(2021),
   });
 
@@ -34,7 +34,9 @@ export default function Leaderboard() {
         score: Number(data[1][index]),
       }));
 
-      setLeaderboard(scores);
+      scores.sort((a, b) => b.score - a.score);
+
+      setLeaderboard(scores.slice(0,10));
     }
   }, [data, isLoading]);
 
